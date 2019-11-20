@@ -1,20 +1,30 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-    defined('BASEPATH') OR exit('No direct script access allowed');
+    class LayananKendModel extends CI_Model {
+        private $table = 'services';
 
-
-    class UserModel extends CI_Model {
-        private $table = 'users';
         public $id;
         public $name;
-        public $email;
-        public $password;
+        public $price;
+        public $type;
+        public $created_at;
         public $rule = [
             [
                 'field' => 'name',
                 'label' => 'name',
                 'rules' => 'required'
             ],
+            [
+                'field' => 'price',
+                'label' => 'price',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'type',
+                'label' => 'type',
+                'rules' => 'required'
+            ]
         ];
 
 
@@ -30,8 +40,12 @@
 
         public function store($request) {
             $this->name = $request->name;
-            $this->email = $request->email;
-            $this->password = password_hash($request->password, PASSWORD_BCRYPT);
+            $this->price = $request->price;
+            $this->type = $request->type;
+            $this->created_at = date('Y-m-d H:i:s');
+            echo $created_at;
+            // $this->created_at = $request->created_at;
+            // $this->password = password_hash($request->password, PASSWORD_BCRYPT);
 
             if ($this->db->insert($this->table, $this)) {
                 return [
@@ -49,8 +63,9 @@
 
         public function update($request, $id) {
             $updateData = [
-                'email' => $request->email,
-                'name' => $request->name
+                'name' => $request->name,
+                'price' => $request->price,
+                'type' => $request->type
             ];
 
             if ($this->db->where('id', $id)->update($this->table, $updateData)) {

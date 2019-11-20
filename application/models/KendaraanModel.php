@@ -3,16 +3,27 @@
     defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-    class UserModel extends CI_Model {
-        private $table = 'users';
+    class KendaraanModel extends CI_Model {
+        private $table = 'branches';
         public $id;
         public $name;
-        public $email;
-        public $password;
+        public $address;
+        public $phoneNumber;
+        public $created_at;
         public $rule = [
             [
                 'field' => 'name',
                 'label' => 'name',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'address',
+                'label' => 'address',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'phoneNumber',
+                'label' => 'phoneNumber',
                 'rules' => 'required'
             ],
         ];
@@ -30,8 +41,11 @@
 
         public function store($request) {
             $this->name = $request->name;
-            $this->email = $request->email;
-            $this->password = password_hash($request->password, PASSWORD_BCRYPT);
+            $this->address = $request->address;
+            $this->phoneNumber = $request->phoneNumber;
+            $this->created_at = date('Y-m-d H:i:s');
+            echo $created_at;
+            //$this->password = password_hash($request->password, PASSWORD_BCRYPT);
 
             if ($this->db->insert($this->table, $this)) {
                 return [
@@ -49,7 +63,8 @@
 
         public function update($request, $id) {
             $updateData = [
-                'email' => $request->email,
+                'address' => $request->address,
+                'phoneNumber' => $request->phoneNumber,
                 'name' => $request->name
             ];
 

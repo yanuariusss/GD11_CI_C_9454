@@ -2,43 +2,43 @@
 
     use Restserver \Libraries\REST_Controller;
 
-    class User extends REST_Controller {
+    class Kendaraan extends REST_Controller {
         public function __construct() {
             header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Methods: GET, OPTIONS, POST, DELETE');
             header('Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding');
 
             parent::__construct();
-            $this->load->model('UserModel');
+            $this->load->model('KendaraanModel');
             $this->load->library('form_validation');
         }
 
         
         public function index_get() {
-            return $this->returnData($this->db->get('users')->result(), false);
+            return $this->returnData($this->db->get('branches')->result(), false);
         }
 
 
         public function index_post($id = null) {
             $validation = $this->form_validation;
-            $rule = $this->UserModel->rules();
+            $rule = $this->KendaraanModel->rules();
 
             if ($id == null) {
                 array_push($rule, [
-                    'field' => 'password',
-                    'label' => 'password',
+                    'field' => 'name',
+                    'label' => 'name',
                     'rules' => 'required'
                 ],
                 [
-                    'field' => 'email',
-                    'label' => 'email',
-                    'rules' => 'required|valid_email|is_unique[users.email]'    
+                    'field' => 'phoneNumber',
+                    'label' => 'phoneNumber',
+                    'rules' => 'required|is_unique[branches.phoneNumber]|numeric'    
                 ]);
             } else {
                 array_push($rule, [
-                    'field' => 'email',
-                    'label' => 'email',
-                    'rules' => 'required|valid_email'
+                    'field' => 'phoneNumber',
+                    'label' => 'phoneNumber',
+                    'rules' => 'required|is_unique[branches.phoneNumber]|numeric'
                 ]);
             }
 
@@ -47,15 +47,17 @@
             if (!$validation->run()) 
                 return $this->returnData($this->form_validation->error_array(), true);
             
-            $user = new UserData();
-            $user->name = $this->post('name');
-            $user->password = $this->post('password');
-            $user->email = $this->post('email');
+            $Kendaraan = new KendaraanData();
+            $Kendaraan->name = $this->post('name');
+            $Kendaraan->address = $this->post('address');
+            $Kendaraan->phoneNumber = $this->post('phoneNumber');
+            $Kendaraan->created_at = $this->post('created_at');
+
 
             if ($id == null) 
-                $response = $this->UserModel->store($user);
+                $response = $this->KendaraanModel->store($Kendaraan);
             else 
-                $response = $this->UserModel->update($user, $id);
+                $response = $this->KendaraanModel->update($Kendaraan, $id);
 
             return $this->returnData($response['msg'], $response['error']);
         }
@@ -65,7 +67,7 @@
             if ($id == null)
                 return $this->returnData('Parameter ID Tidak Ditemukan', true);
 
-            $response = $this->UserModel->destroy($id);
+            $response = $this->KendaraanModel->destroy($id);
             return $this->returnData($response['msg'], $response['error']);
         }
 
@@ -78,10 +80,11 @@
     }
 
 
-    class UserData {
+    class KendaraanData {
         public $name;
-        public $password;
-        public $email;
+        public $address;
+        public $phoneNumber;
+        public $created_at;
     }
 
 ?>

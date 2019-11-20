@@ -2,43 +2,43 @@
 
     use Restserver \Libraries\REST_Controller;
 
-    class User extends REST_Controller {
+    class LayKendaraan extends REST_Controller {
         public function __construct() {
             header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Methods: GET, OPTIONS, POST, DELETE');
             header('Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding');
 
             parent::__construct();
-            $this->load->model('UserModel');
+            $this->load->model('LayananKendModel');
             $this->load->library('form_validation');
         }
 
         
         public function index_get() {
-            return $this->returnData($this->db->get('users')->result(), false);
+            return $this->returnData($this->db->get('services')->result(), false);
         }
 
 
         public function index_post($id = null) {
             $validation = $this->form_validation;
-            $rule = $this->UserModel->rules();
+            $rule = $this->LayananKendModel->rules();
 
             if ($id == null) {
                 array_push($rule, [
-                    'field' => 'password',
-                    'label' => 'password',
+                    'field' => 'name',
+                    'label' => 'name',
                     'rules' => 'required'
                 ],
                 [
-                    'field' => 'email',
-                    'label' => 'email',
-                    'rules' => 'required|valid_email|is_unique[users.email]'    
+                    'field' => 'price',
+                    'label' => 'price',
+                    'rules' => 'required'    
                 ]);
             } else {
                 array_push($rule, [
-                    'field' => 'email',
-                    'label' => 'email',
-                    'rules' => 'required|valid_email'
+                    'field' => 'price',
+                    'label' => 'price',
+                    'rules' => 'required'
                 ]);
             }
 
@@ -47,15 +47,17 @@
             if (!$validation->run()) 
                 return $this->returnData($this->form_validation->error_array(), true);
             
-            $user = new UserData();
-            $user->name = $this->post('name');
-            $user->password = $this->post('password');
-            $user->email = $this->post('email');
+            $LayKendaraan = new LayKendaraanData();
+            $LayKendaraan->name = $this->post('name');
+            $LayKendaraan->price = $this->post('price');
+            $LayKendaraan->type = $this->post('type');
+            $LayKendaraan->created_at = $this->post('created_at');
+
 
             if ($id == null) 
-                $response = $this->UserModel->store($user);
+                $response = $this->LayananKendModel->store($LayKendaraan);
             else 
-                $response = $this->UserModel->update($user, $id);
+                $response = $this->LayananKendModel->update($LayKendaraan, $id);
 
             return $this->returnData($response['msg'], $response['error']);
         }
@@ -65,7 +67,7 @@
             if ($id == null)
                 return $this->returnData('Parameter ID Tidak Ditemukan', true);
 
-            $response = $this->UserModel->destroy($id);
+            $response = $this->LayananKendModel->destroy($id);
             return $this->returnData($response['msg'], $response['error']);
         }
 
@@ -78,10 +80,11 @@
     }
 
 
-    class UserData {
+    class LayKendaraanData {
         public $name;
-        public $password;
-        public $email;
+        public $price;
+        public $type;
+        public $created_at;
     }
 
 ?>
